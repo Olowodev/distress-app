@@ -1,48 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, Image, Button, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet } from 'react-native';
+import Home from './screens/Home';
+import Intro from './screens/Intro';
+import LogIn from './screens/LogIn';
+import SelectContacts from './screens/SelectContacts';
+import SignUp from './screens/SignUp';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <Image style={styles.image} source={require('./assets/logo.png')} />
-      <StatusBar style="auto" />
-      <View style={styles.buttons}>
-        <TouchableOpacity style={styles.signUp}>
-          <Text style={{color: '#fff', textAlign: 'center', fontSize: 24, fontWeight: '600'}}>Sign Up</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.logIn}>
-          <Text style={{color: '#000', textAlign: 'center', fontSize: 24, fontWeight: '600'}}>Log In</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Intro" component={Intro} options={{headerShown: false}}/>
+        <Stack.Screen name="SignUp" component={SignUp} options={{headerShown: false}}/>
+        <Stack.Screen name="LogIn" component={LogIn} options={{headerShown: false}}/>
+        <Stack.Screen name="SelectContacts" component={SelectContacts} options={{headerShown: false}}/>
+        <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'flex-end',
-    marginHorizontal: 35 
-  },
-
-  image: {
-    position: 'absolute',
-    top: '35%',
-    alignSelf: 'center'
-  },
-
-  signUp: {
-    padding: 18,
-    backgroundColor: '#0079BE',
-    borderRadius: 40
-  },
-
-  logIn: {
-    padding: 18,
-    backgroundColor: '#F0F0F0',
-    borderRadius: 40,
-    marginTop: 15,
-    marginBottom: 20
-  },
+  
 });
