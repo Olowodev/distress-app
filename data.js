@@ -4,7 +4,8 @@ export const SignUpInputs = [
     {
         icon: faAt,
         placeHolder: "Enter your email",
-        name: "email"
+        name: "email",
+        keyboardType: "email-address"
     },
     {
         icon: faUser,
@@ -14,7 +15,8 @@ export const SignUpInputs = [
     {
         icon: faPhone,
         placeHolder: "Enter your phone number",
-        name: "phoneNumber"
+        name: "phoneNumber",
+        keyboardType: "phone-pad"
     },
     {
         icon: faLocationArrow,
@@ -24,12 +26,14 @@ export const SignUpInputs = [
     {
         icon: faLock,
         placeHolder: "Enter a password",
-        name: "password"
+        name: "password",
+        secureTextEntry: true
     },
     {
         icon: faLock,
         placeHolder: "Confirm your password",
-        name: "confirmPassword"
+        name: "confirmPassword",
+        secureTextEntry: true
     },
 ]
 
@@ -37,12 +41,14 @@ export const LogInInputs = [
     {
         icon: faAt,
         placeHolder: "Enter your email",
-        name: "email"
+        name: "email",
+        keyboardType: "email-address"
     },
     {
         icon: faLock,
         placeHolder: "Enter your password",
-        name: "password"
+        name: "password",
+        secureTextEntry: true,
     },
 ]
 

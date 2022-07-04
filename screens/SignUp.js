@@ -1,5 +1,6 @@
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native'
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native'
 import React,{useState, useEffect} from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faArrowLeft, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { SignUpInputs } from '../data'
@@ -9,15 +10,26 @@ import { useDispatch } from "react-redux";
 import { signup } from "../redux/apiCalls";
 import * as Contacts from 'expo-contacts';
 import Checkbox from 'expo-checkbox';
+import { Toast } from 'react-native-toast-message'
 
 
 
 function CheckboxComponent({contact, setChecked, checked, setSelectedContacts}) {
     const [clicked, setClicked] = useState(false);
     const {phoneNumbers, ...others} = contact;
-    const number = phoneNumbers[0].digits;
+    const number1 = Platform.OS === "ios" ? phoneNumbers[0].digits : phoneNumbers;
     const {name, ...moreOthers} = contact;
-    const neededContact = {name, number}
+    const neededContact = {name, number: number1}
+
+    const showToast = (type, text1, text2) => {
+        Toast.show({
+            type: type,
+            text1: text1,
+            text2: text2,
+            visibilityTime: 6000,
+        })
+    }
+    
 
     const Pressed = () => {
         if (checked < 5) {
@@ -34,6 +46,7 @@ function CheckboxComponent({contact, setChecked, checked, setSelectedContacts}) 
                 ))
             }
         } else {
+            showToast("error", "You have selected 5 contacts")
             if (clicked == true) {
                 setClicked(false);
                 setChecked(checked = checked - 1);
@@ -148,18 +161,28 @@ const SignUp = ({navigation}) => {
         console.log(selectedContacts)
     }
 
-
+    const showToast = (type, text1, text2) => {
+        Toast.show({
+            type: type,
+            text1: text1,
+            text2: text2,
+            visibilityTime: 6000,
+        })
+    }
     
 
     const handleSubmit = (e) => {
         if (values.email.trim() === "" || values.fullname.trim() === "" || values.phoneNumber.trim() === "" || values.password.trim() === "" || values.confirmPassword.trim() === "") {
             setSignedUp(false);
+            showToast("error", "Please fill in the empty fields")
         } else {
             setSignedUp(true)
         }
         //signup(dispatch,{...values, location: text})
         //navigation.navigate("SelectContacts")
     };
+
+    
 
     
 
@@ -181,7 +204,7 @@ const SignUp = ({navigation}) => {
                     {SignUpInputs.map((input, index) => (
                         <View style={{flexDirection: "row", alignItems: "center", marginTop: 25}} key={index}>
                             <FontAwesomeIcon style={{marginRight: 10, color: "#0083ff"}} size={20} icon={input.icon} />
-                            <TextInput onChangeText={text => setValues({...values, [input.name]: text})} value={input.name === "location" ? text : null} style={{borderBottomWidth: 1, flex: 1, borderColor: "#9dd0ff", paddingBottom: 5}} placeholder={input.placeHolder} />
+                            <TextInput {...input} onChangeText={text => setValues({...values, [input.name]: text})} value={input.name === "location" ? text : null} style={{borderBottomWidth: 1, flex: 1, borderColor: "#9dd0ff", paddingBottom: 5}} placeholder={input.placeHolder} />
                         </View>
                     ))}
                 </View>

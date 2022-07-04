@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View,  TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
 import { faCircleUser, faSignOut} from '@fortawesome/free-solid-svg-icons'
 import * as Location from 'expo-location';
@@ -11,6 +12,7 @@ import Toast from 'react-native-toast-message'
 import Animated from 'react-native-reanimated'
 import ContactAction from '../components/ContactAction'
 import { useSharedValue, useAnimatedStyle, withTiming, withRepeat, interpolate, Extrapolate, withDelay, Easing } from 'react-native-reanimated'
+import { distressButtons } from '../data';
 
 
 /*const Pulse = ({delay = 0, repeat}) => {
@@ -43,6 +45,43 @@ import { useSharedValue, useAnimatedStyle, withTiming, withRepeat, interpolate, 
     return <Animated.View style={[styles.circle, animatedStyles]} />
 };*/
 
+function ButtonComponent({button, user, numbers, batteryLevel, text}) {
+    const [distressLoading, setDistressLoading] = useState(false)
+
+
+    const showToast = (type, text1, text2) => {
+        Toast.show({
+            type: type,
+            text1: text1,
+            text2: text2,
+            visibilityTime: 6000,
+        })
+    }
+
+    const pressed = async (color) => {
+        setDistressLoading(true)
+        try{
+            const res = await publicRequest.post('/distress/sms', {color: color, name: user.fullname, numbers: numbers, battery: batteryLevel, location: text})
+            .then(showToast('success', 'DISTRESS SENT'),
+                setDistressLoading(false))
+        }catch(err){
+            console.log(err)
+            showToast('error', 'DISTRESS MESSAGE NOT SENT')
+            setDistressLoading(false)
+        }
+    }
+    
+
+    
+
+    return (
+        
+        <View style={{position: 'relative', alignItems: 'center', justifyContent: 'center'}}>
+            <TouchableOpacity onPress={()=>pressed(button.distressColor)} style={{backgroundColor: button.bgColor, borderRadius: 50, width: 100, height: 100, position: 'relative', zIndex: 10}}></TouchableOpacity>
+            {distressLoading === true ? <ActivityIndicator style={{position: 'absolute', zIndex: 100}} color='black' />: null }
+        </View>
+    );
+}
 
 
 
@@ -54,9 +93,6 @@ const Home = ({navigation}) => {
     const [numbers, setNumbers] = useState([]);
     //const [pingLoading, setPingLoading] = useState(false)
     //const [messageLoading, setMessageLoading] = useState(false)
-    const [distressLoading, setDistressLoading] = useState(false)
-    const [distressLoading2, setDistressLoading2] = useState(false)
-    const [distressLoading3, setDistressLoading3] = useState(false)
     const [batteryLevel, setBatteryLevel] = useState(null);
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
@@ -132,31 +168,12 @@ const Home = ({navigation}) => {
         text = `${location[0].name}, ${location[0].city}`;
     }
 
-    
-    const pressed = async (color) => {
-        setDistressLoading(true)
-        setDistressLoading2(true)
-        setDistressLoading3(true)
-        try{
-            const res = await publicRequest.post('/distress/sms', {color: color, name: user.fullname, numbers: numbers, battery: batteryLevel, location: text})
-            showToast('success', 'DISTRESS SENT')
-            setDistressLoading(false)
-            setDistressLoading2(false)
-            setDistressLoading3(false)
-        }catch(err){
-            console.log(err)
-            showToast('error', 'DISTRESS MESSAGE NOT SENT')
-            setDistressLoading(false)
-            setDistressLoading2(false)
-            setDistressLoading3(false)
-        }
-    }
 
     const ping = async (closeContact) => {
         //setPingLoading(true)
         try {
             const res = await publicRequest.post('distress/call-single', {name: user.fullname, number: closeContact.number, battery: batteryLevel, location: text})
-            showToast('success', 'DISTRESS CALL SENT')
+            .then(showToast('success', 'DISTRESS CALL SENT'))
             //setPingLoading(false)
             //console.log(pingLoading)
         } catch (err) {
@@ -170,7 +187,7 @@ const Home = ({navigation}) => {
         //setMessageLoading(true)
         try {
             const res = await publicRequest.post('distress/sms-single', {name: user.fullname, number: closeContact.number, battery: batteryLevel, location: text})
-            showToast('success', 'DISTRESS MESSAGE SENT')
+            .then(showToast('success', 'DISTRESS MESSAGE SENT'))
             //setMessageLoading(false)
         } catch (err) {
             console.log(err)
@@ -189,18 +206,9 @@ const Home = ({navigation}) => {
             </View>
             <View style={{marginVertical: 50}}>
                 <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
-                    <View style={{position: 'relative', alignItems: 'center', justifyContent: 'center'}}>
-                        <TouchableOpacity onPress={()=>pressed("yellow")} style={{backgroundColor: '#fff000', borderRadius: 50, width: 100, height: 100, position: 'relative', zIndex: 10}}></TouchableOpacity>
-                        {distressLoading === true ? <ActivityIndicator style={{position: 'absolute', zIndex: 100}} color='black' /> : null}
-                    </View>
-                    <View style={{position: 'relative', alignItems: 'center', justifyContent: 'center'}}>
-                        <TouchableOpacity onPress={()=>pressed("ORANGE")} style={{backgroundColor: '#ffa500', borderRadius: 50, width: 100, height: 100, position: 'relative', zIndex: 10}}></TouchableOpacity>
-                        {distressLoading2 === true ? <ActivityIndicator style={{position: 'absolute', zIndex: 100}} color='black'/>: null}
-                    </View>
-                    <View style={{position: 'relative', alignItems: 'center', justifyContent: 'center'}}>
-                        <TouchableOpacity onPress={()=>pressed("RED")} style={{backgroundColor: '#ff0000', borderRadius: 50, width: 100, height: 100, position: 'relative', zIndex: 10}}></TouchableOpacity>
-                        {distressLoading3 === true ? <ActivityIndicator style={{position: 'absolute', zIndex: 100}} color='black' />: null }
-                    </View>
+                    {distressButtons.map((button, index) => (
+                        <ButtonComponent user={user} batteryLevel={batteryLevel} text={text} numbers={numbers} button={button} key={index} />
+                    ))}
                 </View>
             </View>
             <ScrollView>

@@ -1,5 +1,6 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, Keyboard, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, Image, TextInput, Keyboard, ActivityIndicator } from 'react-native'
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import {faArrowLeft} from '@fortawesome/free-solid-svg-icons'
 import { LogInInputs } from '../data'
 import React,{useEffect, useState} from 'react'
@@ -67,7 +68,7 @@ const LogIn = ({navigation}) => {
                     {LogInInputs.map((input, index) => (
                         <View style={{flexDirection: "row", alignItems: "center", marginTop: 50}} key={index}>
                             <FontAwesomeIcon style={{marginRight: 10, color: "#0083ff"}} size={20} icon={input.icon} />
-                            <TextInput onChangeText={text => setValues({...values, [input.name]: text})} style={{borderBottomWidth: 1, flex: 1, borderColor: "#9dd0ff", paddingBottom: 10}} placeholder={input.placeHolder} />
+                            <TextInput {...input} onChangeText={text => setValues({...values, [input.name]: text})} style={{borderBottomWidth: 1, flex: 1, borderColor: "#9dd0ff", paddingBottom: 10}} placeholder={input.placeHolder} />
                         </View>
                     ))}
                 </View>
