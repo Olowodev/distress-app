@@ -6,6 +6,7 @@ import Intro from './screens/Intro';
 import LogIn from './screens/LogIn';
 import SignUp from './screens/SignUp';
 import { useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message'
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ export default function Navigation() {
             <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
           </>)}
           </Stack.Navigator>
+          <Toast />
         </NavigationContainer>
   );
 }

@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, Keyboard } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, Keyboard, ActivityIndicator } from 'react-native'
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
 import {faArrowLeft} from '@fortawesome/free-solid-svg-icons'
 import { LogInInputs } from '../data'
@@ -12,11 +12,21 @@ import { login } from "../redux/apiCalls";
 
 const LogIn = ({navigation}) => {
 
-    const user = useSelector((state) => state.user.user === null ? null : state.user.user);
+    const dispatch = useDispatch();
+
+
   const isLoading = useSelector((state) => state.user.isFetching === null ? null : state.user.isFetching);
-  const errorMessage = useSelector((state) => state.user.error === null ? null : state.user.error);
 
   const [shown, setShown] = useState(false);
+  const [values, setValues] = useState({
+    fullname: '',
+    location: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    phoneNumber: ''
+});
+
 
     useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -33,16 +43,7 @@ const LogIn = ({navigation}) => {
       }, []);
 
 
-    const [values, setValues] = useState({
-        fullname: '',
-        location: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        phoneNumber: ''
-    });
-
-    const dispatch = useDispatch();
+    
 
     
     const handleSubmit = (e) => {
@@ -73,7 +74,7 @@ const LogIn = ({navigation}) => {
             </View>
             <View>
                 <TouchableOpacity onPress={()=>handleSubmit()} style={styles.button}>
-                {isLoading ? <View><View></View></View> : <Text style={{textAlign: "center", color: "#fff", fontSize: 20, fontWeight: "600"}}>Log In</Text>}
+                {isLoading === true ? <ActivityIndicator color="white" /> : <Text style={{textAlign: "center", color: "#fff", fontSize: 20, fontWeight: "600"}}>Log In</Text>}
                 </TouchableOpacity>
                 <Text style={{textAlign: "center", color: "#727272", fontSize: 14}}>New to DISTRESS? <Text onPress={()=>navigation.navigate("SignUp")} style={{color: "#0079be", fontSize: 14}}>Sign Up</Text></Text>
             </View>

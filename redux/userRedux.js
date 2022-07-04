@@ -9,7 +9,9 @@ const userSlice = createSlice ({
     },
     reducers: {
         signupStart: (state)=>{
-            state.isFetching=true
+            state.isFetching=true;
+            state.error=null;
+            
         },
         signupSuccess: (state, action)=>{
             state.isFetching=false;
@@ -22,7 +24,8 @@ const userSlice = createSlice ({
             state.user = null;
         },
         loginStart: (state)=>{
-            state.isFetching=true
+            state.isFetching=true;
+            state.error=null;
         },
         loginSuccess: (state, action)=>{
             state.isFetching=false;
@@ -36,6 +39,8 @@ const userSlice = createSlice ({
         },
         logoutStart: (state)=>{
             state.isFetching=true
+            state.error=null;
+
         },
         logoutSuccess: (state)=>{
             state.isFetching=false;
@@ -48,6 +53,8 @@ const userSlice = createSlice ({
         },
         updateUserStart: (state)=>{
             state.isFetching=true
+            state.error=null;
+
         },
         updateUserSuccess: (state, action)=>{
             state.isFetching=false;

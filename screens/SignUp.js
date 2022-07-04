@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native'
 import React,{useState, useEffect} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faArrowLeft, faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -12,11 +12,11 @@ import Checkbox from 'expo-checkbox';
 
 
 
-function CheckboxComponent({contact, setChecked, checked, selectedContacts, setSelectedContacts}) {
+function CheckboxComponent({contact, setChecked, checked, setSelectedContacts}) {
     const [clicked, setClicked] = useState(false);
     const {phoneNumbers, ...others} = contact;
     const number = phoneNumbers[0].digits;
-    const {name, ...others1} = contact;
+    const {name, ...moreOthers} = contact;
     const neededContact = {name, number}
 
     const Pressed = () => {
@@ -68,12 +68,6 @@ const SignUp = ({navigation}) => {
 
     const [contacts, setContacts] = useState([]);
     const [selectedContacts, setSelectedContacts] = useState([]);
-
-
-    const user = useSelector((state) => state.user.user === null ? null : state.user.user);
-    const isLoading = useSelector((state) => state.user.isFetching === null ? null : state.user.isFetching);
-    const errorMessage = useSelector((state) => state.user.error === null ? null : state.user.error);
-
     const [values, setValues] = useState({
         fullname: '',
         email: '',
@@ -83,22 +77,12 @@ const SignUp = ({navigation}) => {
     });
 
 
+
+    const isLoading = useSelector((state) => state.user.isFetching === null ? null : state.user.isFetching);
+
+    
+
     const dispatch = useDispatch();
-
-    let text = '';
-    if (errorMsg) {
-        text = errorMsg;
-    } else if (location1) {
-        text = location1[0].city;
-
-        //console.log(text)
-    }
-
-    const continueButton = () => {
-        signup(dispatch, {...values, location: text, closeContacts: selectedContacts});
-        console.log(selectedContacts)
-    }
-
 
     useEffect(() => {
         (async () => {
@@ -150,6 +134,23 @@ const SignUp = ({navigation}) => {
         })();
     }, []);
 
+    let text = '';
+    if (errorMsg) {
+        text = errorMsg;
+    } else if (location1) {
+        text = location1[0].city;
+
+        //console.log(text)
+    }
+
+    const continueButton = () => {
+        signup(dispatch, {...values, location: text, closeContacts: selectedContacts});
+        console.log(selectedContacts)
+    }
+
+
+    
+
     const handleSubmit = (e) => {
         if (values.email.trim() === "" || values.fullname.trim() === "" || values.phoneNumber.trim() === "" || values.password.trim() === "" || values.confirmPassword.trim() === "") {
             setSignedUp(false);
@@ -190,7 +191,7 @@ const SignUp = ({navigation}) => {
             </View>
             <View>
                 <TouchableOpacity onPress={()=>handleSubmit()} style={styles.button}>
-                {isLoading ? <View><View></View></View> : <Text style={{textAlign: "center", color: "#fff", fontSize: 20, fontWeight: "600"}}>Sign up</Text>}
+                {isLoading === true ? <ActivityIndicator color='white' /> : <Text style={{textAlign: "center", color: "#fff", fontSize: 20, fontWeight: "600"}}>Sign up</Text>}
                 </TouchableOpacity>
                 <Text style={{textAlign: "center", color: "#727272", fontSize: 14}}>Joined us before? <Text onPress={()=>navigation.navigate("LogIn")} style={{color: "#0079be", fontSize: 14}}>Log In</Text></Text>
             </View>
@@ -218,7 +219,7 @@ const SignUp = ({navigation}) => {
         </ScrollView>
         {checked > 2 ? <View style={{position: "absolute", bottom: 0, width: "100%"}}>
                 <TouchableOpacity onPress={()=>continueButton()} style={styles.button1}>
-                {isLoading ? <View><View></View></View> : <Text style={{textAlign: "center", color: "#fff", fontSize: 20, fontWeight: "600"}}>Continue</Text>}
+                {isLoading === true ? <ActivityIndicator color='white' /> : <Text style={{textAlign: "center", color: "#fff", fontSize: 20, fontWeight: "600"}}>Continue</Text>}
                 </TouchableOpacity>
                 {/*<Text onPress={()=>navigation.navigate("Home")} style={{textAlign: "center", color: "#0079be", fontSize: 24}}>Skip for now</Text>*/}
             </View>: null}

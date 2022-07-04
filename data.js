@@ -46,6 +46,21 @@ export const LogInInputs = [
     },
 ]
 
+export const distressButtons = [
+    {
+        distressColor: 'yellow',
+        bgColor: '#fff000'
+    },
+    {
+        distressColor: 'orange',
+        bgColor: '#ffa500'
+    },
+    {
+        distressColor: 'red',
+        bgColor: '#ff0000'
+    },
+]
+
 export const emergencyNumbers = [
     {
         Abia: '+2348079210003'
