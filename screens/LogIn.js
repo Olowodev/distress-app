@@ -1,10 +1,56 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, TextInput } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, TextInput, Keyboard } from 'react-native'
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
 import {faArrowLeft} from '@fortawesome/free-solid-svg-icons'
 import { LogInInputs } from '../data'
-import React from 'react'
+import React,{useEffect, useState} from 'react'
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { login } from "../redux/apiCalls";
+
+
+
 
 const LogIn = ({navigation}) => {
+
+    const user = useSelector((state) => state.user.user === null ? null : state.user.user);
+  const isLoading = useSelector((state) => state.user.isFetching === null ? null : state.user.isFetching);
+  const errorMessage = useSelector((state) => state.user.error === null ? null : state.user.error);
+
+  const [shown, setShown] = useState(false);
+
+    useEffect(() => {
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+          setShown(true);
+        });
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+          setShown(false);
+        });
+    
+        return () => {
+          showSubscription.remove();
+          hideSubscription.remove();
+        };
+      }, []);
+
+
+    const [values, setValues] = useState({
+        fullname: '',
+        location: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        phoneNumber: ''
+    });
+
+    const dispatch = useDispatch();
+
+    
+    const handleSubmit = (e) => {
+        login(dispatch,{...values})
+    };
+
+    
+
   return (
     <SafeAreaView>
         <View style={styles.logIn}>
@@ -12,7 +58,7 @@ const LogIn = ({navigation}) => {
                 <TouchableOpacity onPress={()=>navigation.goBack()}>
                     <FontAwesomeIcon style={{color: "#9dd0ff"}} size={32} icon={faArrowLeft} />
                 </TouchableOpacity>
-                <Image style={{alignSelf: "center"}} source={require("../assets/pana.png")} />
+                {!shown ? <Image style={{alignSelf: "center"}} source={require("../assets/pana.png")} /> : null }
             </View>
             <View style={styles.inputCont}>
                 <Text style={{color: "#005687", fontWeight: "600", fontSize: 32, lineHeight: 39}}>Log In</Text>
@@ -20,14 +66,14 @@ const LogIn = ({navigation}) => {
                     {LogInInputs.map((input, index) => (
                         <View style={{flexDirection: "row", alignItems: "center", marginTop: 50}} key={index}>
                             <FontAwesomeIcon style={{marginRight: 10, color: "#0083ff"}} size={20} icon={input.icon} />
-                            <TextInput style={{borderBottomWidth: 1, flex: 1, borderColor: "#9dd0ff", paddingBottom: 10}} placeholder={input.placeHolder} />
+                            <TextInput onChangeText={text => setValues({...values, [input.name]: text})} style={{borderBottomWidth: 1, flex: 1, borderColor: "#9dd0ff", paddingBottom: 10}} placeholder={input.placeHolder} />
                         </View>
                     ))}
                 </View>
             </View>
             <View>
-                <TouchableOpacity onPress={()=>navigation.navigate("Home")} style={styles.button}>
-                    <Text style={{textAlign: "center", color: "#fff", fontSize: 20, fontWeight: "600"}}>Log In</Text>
+                <TouchableOpacity onPress={()=>handleSubmit()} style={styles.button}>
+                {isLoading ? <View><View></View></View> : <Text style={{textAlign: "center", color: "#fff", fontSize: 20, fontWeight: "600"}}>Log In</Text>}
                 </TouchableOpacity>
                 <Text style={{textAlign: "center", color: "#727272", fontSize: 14}}>New to DISTRESS? <Text onPress={()=>navigation.navigate("SignUp")} style={{color: "#0079be", fontSize: 14}}>Sign Up</Text></Text>
             </View>
